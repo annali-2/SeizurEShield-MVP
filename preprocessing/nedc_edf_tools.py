@@ -31,8 +31,8 @@ import sys
 
 # import NEDC modules
 #
-import nedc_debug_tools as ndt
-import nedc_file_tools as nft
+import preprocessing.nedc_debug_tools as ndt
+import preprocessing.nedc_file_tools as nft
 
 #------------------------------------------------------------------------------
 #                                                                              

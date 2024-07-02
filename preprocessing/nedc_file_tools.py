@@ -30,7 +30,7 @@ import errno
 
 # import NEDC modules
 #
-import nedc_debug_tools as ndt
+import preprocessing.nedc_debug_tools as ndt
 
 #------------------------------------------------------------------------------
 #                                                                              

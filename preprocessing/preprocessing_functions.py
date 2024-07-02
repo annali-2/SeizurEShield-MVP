@@ -10,13 +10,12 @@ from fnmatch import fnmatch
 import shutil
 import time
 from tqdm import tqdm
-from multiprocess import Pool
 import time
 
-import nedc_debug_tools as ndt
-import nedc_edf_tools as net
-import nedc_file_tools as nft
-import nedc_mont_tools as nmt
+import preprocessing.nedc_debug_tools as ndt
+import preprocessing.nedc_edf_tools as net
+import preprocessing.nedc_file_tools as nft
+import preprocessing.nedc_mont_tools as nmt
 
 
 
@@ -26,7 +25,7 @@ import nedc_mont_tools as nmt
 #
 #------------------------------------------------------------------------------
 
-# define default argument values
+# define default argument valuesp
 #
 DEF_BSIZE = int(10)
 DEF_FORMAT_FLOAT = "float"
@@ -202,4 +201,41 @@ def nedc_pystream_edf(fname, montage, bsize, format, mode, output_fname,fp = sys
     # exit gracefully
     #
     return True
+
+montage_files = {
+'01_tcp_ar':'montages/01_tcp_ar_montage.txt',
+'02_tcp_le': 'montages/02_tcp_le_montage.txt',
+'03_tcp_ar_a': 'montages//03_tcp_ar_a_montage.txt',
+'04_tcp_le_a': 'montages//04_tcp_le_a_montage.txt'
+}
+
+def extract_filename_part(file_path):
+    match = re.search(r'([^/]+)\.edf$', file_path)
+    if match:
+        return match.group(0)
+    return None
+
+def process(edf_fp, montage):
+    # Extract montage filename
+    montage_fname = montage_files.get(montage, 'NA')
+    mnt = nmt.Montage()
+
+    # Load montage object if available
+    if montage != 'NA':
+        montage_obj = mnt.load(montage_fname)
+    else:
+        return None
+    
+    # Assuming `dev` and other variables are defined elsewhere
+    output_edf_fname = "data/" + extract_filename_part(edf_fp)
+    
+    # Copy EDF file to output directory
+    shutil.copy(edf_fp, output_edf_fname)
+
+    # Process EDF file
+    print(time.time(), "<-----Start processing: ", edf_fp, "---------->\n")
+    nedc_pystream_edf(edf_fp, montage_obj, DEF_BSIZE, DEF_FORMAT_FLOAT, DEF_MODE, output_edf_fname, sys.stdout)
+    print(time.time(), "<-----Finished processing: ", extract_filename_part(edf_fp), "---------->\n")
+    return output_edf_fname
+
 
