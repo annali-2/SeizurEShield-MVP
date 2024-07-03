@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import os
 import tempfile
 import pickle
@@ -7,8 +7,8 @@ import mne
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
+def index():
+   return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
