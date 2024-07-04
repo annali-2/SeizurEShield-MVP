@@ -1,14 +1,53 @@
-from flask import Flask, render_template, request, jsonify
-import os
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from werkzeug.utils import secure_filename
 import tempfile
 import pickle
+import os
 import mne
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads/'
+app.config['ALLOWED_EXTENSIONS'] = {'edf'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/')
 def index():
    return render_template('index.html')
+
+@app.route('/upload')
+def upload_egg():
+    return render_template('uploads.html')
+
+@app.route('/upload_file', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        # Ensure the uploads directory exists
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Process the .edf file and generate output using MNE-Python
+        output = process_file(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return render_template('results.html', filename=filename, channels=output['channels'], duration=output['duration'])
+    else:
+        flash('File type not allowed')
+        return redirect(request.url)
+    
+def process_file(filepath):
+    # Add your .edf file processing logic using MNE-Python
+    raw = mne.io.read_raw_edf(filepath)
+    info = raw.info
+    channels = info['ch_names']
+    duration = raw.times[-1]
+    return {'channels': channels, 'duration': duration}
 
 @app.route('/predict', methods=['POST'])
 def predict():

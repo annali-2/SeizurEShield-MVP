@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>EDF File Processing Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>EDF File Processing Result</h1>
+    
+    <div class="result">
+        <h2>File Details:</h2>
+        <p><strong>Filename:</strong> {{ filename }}</p>
+        <p><strong>Channels:</strong></p>
+        <ul>
+            {% for channel in channels %}
+                <li>{{ channel }}</li>
+            {% endfor %}
+        </ul>
+        <p><strong>Duration:</strong> {{ duration }} seconds</p>
+    </div>
+
+    <div class="result">
+        <h2>Additional Information:</h2>
+        <p>Replace this with any additional information or analysis results you want to display.</p>
+    </div>
+
+</body>
+</html>
