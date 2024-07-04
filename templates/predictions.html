@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Predictions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f2f2f2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        caption {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>First 10 Rows of Predictions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>FP1-F7</th>
+                <th>F7-T3</th>
+                <th>T3-T5</th>
+                <th>T5-O1</th>
+                <th>FP2-F8</th>
+                <th>F8-T4</th>
+                <th>T4-T6</th>
+                <th>T6-O2</th>
+                <th>A1-T3</th>
+                <th>T3-C3</th>
+                <th>C3-CZ</th>
+                <th>CZ-C4</th>
+                <th>C4-T4</th>
+                <th>T4-A2</th>
+                <th>FP1-F3</th>
+                <th>F3-C3</th>
+                <th>C3-P3</th>
+                <th>P3-O1</th>
+                <th>FP2-F4</th>
+                <th>F4-C4</th>
+                <th>C4-P4</th>
+                <th>P4-O2</th>
+                <th>Timestamp</th>
+                <th>File Path</th>
+                <th>Predicted Class</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in predictions %}
+                <tr>
+                    <td>{{ row['FP1-F7']|round(3) }}</td>
+                    <td>{{ row['F7-T3']|round(3) }}</td>
+                    <td>{{ row['T3-T5']|round(3) }}</td>
+                    <td>{{ row['T5-O1']|round(3) }}</td>
+                    <td>{{ row['FP2-F8']|round(3) }}</td>
+                    <td>{{ row['F8-T4']|round(3) }}</td>
+                    <td>{{ row['T4-T6']|round(3) }}</td>
+                    <td>{{ row['T6-O2']|round(3) }}</td>
+                    <td>{{ row['A1-T3']|round(3) }}</td>
+                    <td>{{ row['T3-C3']|round(3) }}</td>
+                    <td>{{ row['C3-CZ']|round(3) }}</td>
+                    <td>{{ row['CZ-C4']|round(3) }}</td>
+                    <td>{{ row['C4-T4']|round(3) }}</td>
+                    <td>{{ row['T4-A2']|round(3) }}</td>
+                    <td>{{ row['FP1-F3']|round(3) }}</td>
+                    <td>{{ row['F3-C3']|round(3) }}</td>
+                    <td>{{ row['C3-P3']|round(3) }}</td>
+                    <td>{{ row['P3-O1']|round(3) }}</td>
+                    <td>{{ row['FP2-F4']|round(3) }}</td>
+                    <td>{{ row['F4-C4']|round(3) }}</td>
+                    <td>{{ row['C4-P4']|round(3) }}</td>
+                    <td>{{ row['P4-O2']|round(3) }}</td>
+                    <td>{{ row['timestamp'] }}</td>
+                    <td>{{ row['file_path'] }}</td>
+                    <td>{{ row['predicted_class'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="result">
+        <h2>Additional Information:</h2>
+        <ul>
+            {% for info in additional_info %}
+                <li>Processed File: {{ info.file_name }}</li>
+                <li>Download Predictions File: <a href="{{ url_for('download_file', filename=info.file_name) }}"> {{ info.processed_file_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>
