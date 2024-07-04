@@ -71,11 +71,15 @@ if __name__ == '__main__':
     print('Probabilities:', probabilities)
     print('Predicted classes:', predicted_classes)
 
+
+
     # Convert predicted_classes tensor to a Pandas Series and add predicted_classes as a column to edf_preprocessed
     predicted_classes_series = pd.Series(predicted_classes.numpy(), name='predicted_class')
     edf_preprocessed_with_classes = edf_preprocessed.assign(predicted_class=predicted_classes_series)
 
     print(edf_preprocessed_with_classes.head())
-    edf_preprocessed_with_classes.to_csv('hi.csv')
+    proportion_class_1 = torch.sum(predicted_classes == 1).item() / len(predicted_classes)
+    print(torch.sum(predicted_classes == 1))
+    print(f"Proportion of predicted class 1: {proportion_class_1:.2f}") 
    # print(load_model('model_dir/model.pth'))
     #print(predict('aaaaaajy_s002_t000.edf', '01_tcp_ar'))

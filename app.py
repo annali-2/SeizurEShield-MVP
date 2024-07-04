@@ -1,5 +1,4 @@
 import os
-import pickle
 import tarfile
 import mne
 
@@ -103,10 +102,10 @@ def predict_file():
     model_path = os.path.join(extract_path, 'model.pth')
 
     # Define model parameters (these should match those used during training)
-    input_size = 23  
-    hidden_size = 128  
-    output_size = 2  
-    num_layers = 2  
+    input_size = 23
+    hidden_size = 128
+    output_size = 2
+    num_layers = 2
 
     # Load the model
     model = load_model(model_path, input_size, hidden_size, output_size, num_layers)
