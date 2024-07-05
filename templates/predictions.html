@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/header.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/styles.css') }}" type="text/css">
     <title>Predictions</title>
     <style>
         body {
@@ -35,6 +41,14 @@
         }
     </style>
 </head>
+<div class="header">
+    <a href="/" class="logo">Home</a>
+    <div class="header-right">
+        <a href="/upload">Upload EEG</a>
+        <a href="/predict">Predict</a>
+        <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
+    </div>
+</div>
 <body>
     <h2>First 10 Rows of Predictions</h2>
     <table>
@@ -108,6 +122,11 @@
             {% endfor %}
         </ul>
     </div>
-
+    <p></p><p></p><p></p>
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; SeizurEShield 2024</p>
+        </div>
+    </footer>
 </body>
 </html>

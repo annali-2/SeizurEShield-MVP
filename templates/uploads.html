@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/header.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/styles.css') }}" type="text/css">
 </head>
+<div class="header">
+  <a href="/" class="logo">Home</a>
+  <div class="header-right">
+      <a href="/upload">Upload EEG</a>
+      <a href="/predict">Predict</a>
+      <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
+  </div>
+</div>
 <body>
     <h1>Upload EDF File</h1>
     <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_file') }}">
@@ -25,5 +33,12 @@
         </ul>
       {% endif %}
     {% endwith %}
+
+    <p></p><p></p><p></p>
+    <footer class="py-5 bg-dark">
+      <div class="container">
+          <p class="m-0 text-center text-white">Copyright &copy; SeizurEShield 2024</p>
+      </div>
+  </footer>
 </body>
 </html>
