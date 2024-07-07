@@ -7,45 +7,114 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/header.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/styles.css') }}" type="text/css">
 </head>
-<div class="header">
-    <a href="/" class="logo">Home</a>
-    <div class="header-right">
-        <a href="/upload">Upload EEG</a>
-        <a href="/predict">Predict</a>
-        <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
-    </div>
-</div>
 
 <body>
+    <div class="header">
+        <a href="/" class="logo">Home</a>
+        <div class="header-right">
+            <a href="/upload">Upload EEG</a>
+            <a href="/predict">Predict</a>
+            <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Heading Row-->
         <div class="row align-items-center my-5">
-            <div class="col-lg-7"><img class="img-fluid rounded mb-2 mb-lg-0"
-                    src="/static/images/logo.png"
-                    alt="..." /></div>
+            <div class="col-lg-7">
+                <img class="img-fluid rounded mb-2 mb-lg-0" src="/static/images/logo.png" alt="..." />
+            </div>
             <div class="col-lg-5">
                 <h1 class="font-weight-light">Our Mission!</h1>
-                <p>Our mission is to empower individuals with epilepsy through advanced machine learning solutions to detect and predict seizure activity, enhancing their quality of life and ensuring their dignity and safety.
-                </p>
-                <a class="btn btn-primary" href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
-                <p></p><p></p><p></p>
-                <!-- <h1 class="font-weight-light">How To Use</h1>
-                <p>Fill in  -->
-                </p>
+                <p>Our mission is to empower individuals with epilepsy through advanced machine learning solutions
+                    to detect and predict seizure activity, enhancing their quality of life and ensuring their dignity
+                    and safety.</p>
+                <a class="btn btn-primary" href="https://arshiasharma4.github.io/SeizureEShield/"
+                    target="_blank">About Us</a>
+            </div>
+        </div>
+
+        <!-- Horizontal Line for Visual Separation -->
+        <div class="row">
+            <div class="col">
+                <hr class="my-4">
+            </div>
+        </div>
+
+        <!-- EEG and Seizure Detection Section -->
+        <div class="row my-5">
+            <div class="col-lg-12">
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">What is an EEG?</h5>
+                            <p class="card-text">An EEG (Electroencephalogram) is a test that detects electrical
+                                activity in your brain using small, flat metal discs (electrodes) attached to your
+                                scalp. It helps doctors diagnose epilepsy and other neurological conditions.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Why Seizure Detection Matters?</h5>
+                            <p class="card-text">Seizure detection is crucial for individuals with epilepsy as it
+                                allows for timely intervention and better management of their condition. By analyzing
+                                EEG recordings, our tool aims to provide accurate detection and prediction of seizure
+                                activity, which can significantly improve the quality of life for those affected.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits of SeizurEShield Section -->
+        <div class="row my-5">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Benefits of SeizurEShield</h5>
+                        <p class="card-text">SeizurEShield utilizes EEG recordings to analyze brain activity in
+                            real-time.</p>
+                        <ul>
+                            <li>Real-time seizure detection</li>
+                            <li>Predictive alerts for early intervention</li>
+                            <li>Enhanced safety and peace of mind for users and caregivers</li>
+                            <li>Improved management of epilepsy through data-driven insights</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How SeizurEShield Works Section -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">How SeizurEShield Works</h5>
+                        <p class="card-text">SeizurEShield utilizes EEG recordings to analyze brain activity in
+                            real-time. Here’s how it works:</p>
+                        <ol>
+                            <li>User uploads EEG data via the app.</li>
+                            <li>Machine learning algorithms analyze EEG patterns.</li>
+                            <li>Seizure detection algorithms identify potential seizure events.</li>
+                            <li>If a seizure is detected, alerts are sent to caregivers or emergency services.</li>
+                        </ol>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-
-    </div>
+    <!-- Footer -->
     <footer class="py-5 bg-dark">
         <div class="container">
             <p class="m-0 text-center text-white">Copyright &copy; SeizurEShield 2024</p>
         </div>
     </footer>
+
+    <!-- Bootstrap JavaScript and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -1,61 +1,75 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <title>EDF File Processing Result</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <!-- Bootstrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles/header.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles/styles.css') }}" type="text/css">
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/header.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" type="text/css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            background-size: cover;
+            background-position: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .result {
             margin-top: 20px;
-            padding: 10px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+        .result h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .result p {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
-<div class="header">
-    <a href="/" class="logo">Home</a>
-    <div class="header-right">
-        <a href="/upload">Upload EEG</a>
-        <a href="/predict">Predict</a>
-        <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
-    </div>
-</div>
 <body>
-    <h1>EDF File Processing Result</h1>
-    
-    <div class="result">
-        <h2>File Details:</h2>
-        <p><strong>Filename:</strong> {{ filename }}</p>
-        <p><strong>Channels:</strong></p>
-        <ul>
-            {% for channel in channels %}
-                <li>{{ channel }}</li>
-            {% endfor %}
-        </ul>
-        <p><strong>Duration:</strong> {{ duration }} seconds</p>
-    </div>
-
-    <div class="result">
-        <h2>Additional Information:</h2>
-        <p>Replace this with any additional information or analysis results you want to display.</p>
-    </div>
-
-    <p></p><p></p><p></p>
-    <footer class="py-5 bg-dark">
-        <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; SeizurEShield 2024</p>
+    <div class="header">
+        <a href="/" class="logo">Home</a>
+        <div class="header-right">
+            <a href="/upload">Upload EEG</a>
+            <a href="/predict">Predict</a>
+            <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
         </div>
-    </footer>
+    </div>
+
+    <div class="container">
+        <h1 class="text-center mt-4">EDF File Processing Result</h1>
+        
+        <div class="result">
+            <h2>File Details</h2>
+            <p><strong>Filename:</strong> {{ filename }}</p>
+            <p><strong>Channels:</strong></p>
+            <ul>
+                {% for channel in channels %}
+                    <li>{{ channel }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>Duration:</strong> {{ duration }} seconds</p>
+        </div>
+
+        <div class="result">
+            <h2>Additional Information:</h2>
+            <p>Replace this with any additional information or analysis results you want to display.</p>
+            <p></p>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JavaScript and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-+MdAjzJUN4tcaJQqpBxiHp2Adp4y0pVd/iJ5lDsd4DP7xP+l3jpKsUJ0lLtzxbFQ"
+        crossorigin="anonymous"></script>
 </body>
 </html>
