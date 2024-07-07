@@ -5,6 +5,9 @@ import mne
 import torch
 import torch.nn as nn
 import pandas as pd
+import altair as alt
+import random
+alt.data_transformers.disable_max_rows()
 
 from flask import (
     Flask,
@@ -190,3 +193,43 @@ def download_file(filename):
     data_folder = app.config["DATA_FOLDER"]
     processed_filename = f"{filename.split('.')[0]}_processed.csv"
     return send_from_directory(data_folder, processed_filename, as_attachment=True)
+
+
+# Get Altair Visual 
+@app.route("/visual/<filename>")
+def visual(filename):
+    processed_filename = f"data/{filename}"
+    # Sample data similar to the one you provided
+    data = pd.read_csv(processed_filename)
+    # Create a DataFrame
+    df = pd.DataFrame(data)
+    
+    # Select columns related to EEG channels
+    eeg_columns = ['FP1-F7', 'F7-T3', 'T3-T5', 'T5-O1', 'FP2-F8', 'F8-T4', 'T4-T6', 'T6-O2',
+                'A1-T3', 'T3-C3', 'C3-CZ', 'CZ-C4', 'C4-T4', 'T4-A2', 'FP1-F3', 'F3-C3',
+                'C3-P3', 'P3-O1', 'FP2-F4', 'F4-C4', 'C4-P4', 'P4-O2']
+
+    colors = {}
+    for channel in eeg_columns:
+        colors[channel] = "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+    # Filter the DataFrame to include only EEG-related columns
+    df_filtered = df[['timestamp'] + eeg_columns]
+
+    # Melt the DataFrame to reshape it
+    df_melted = df_filtered.melt(id_vars=['timestamp'], var_name='Channel', value_name='Amplitude')
+
+    # Create an Altair chart with custom colors
+    chart = alt.Chart(df_melted).mark_line().encode(
+        x='timestamp',
+        y='Amplitude',
+        color=alt.Color('Channel', scale=alt.Scale(domain=eeg_columns, range=[colors[ch] for ch in eeg_columns])),
+        tooltip=['timestamp', 'Channel', 'Amplitude']
+    ).properties(
+        width=800,
+        height=400,
+        title='EEG Data'
+    ).interactive()
+    chart.save('templates/eeg_chart.html')
+    return render_template("eeg_chart.html")
+

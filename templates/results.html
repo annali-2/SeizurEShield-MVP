@@ -29,6 +29,22 @@
         .result p {
             margin-bottom: 10px;
         }
+        .predict-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .predict-button button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .predict-button button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -36,7 +52,7 @@
         <a href="/" class="logo">Home</a>
         <div class="header-right">
             <a href="/upload">Upload EEG</a>
-            <a href="/predict">Predict</a>
+            <a href="/results">File Info & Prediction</a>
             <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
         </div>
     </div>
@@ -44,6 +60,12 @@
     <div class="container">
         <h1 class="text-center mt-4">EDF File Processing Result</h1>
         
+        <div class="predict-button">
+            <form method="post" enctype="multipart/form-data" action="{{ url_for('predict_file') }}">
+                <button type="submit" class="btn btn-primary">Predict for Seizure </button>
+            </form>
+        </div>
+
         <div class="result">
             <h2>File Details</h2>
             <p><strong>Filename:</strong> {{ filename }}</p>
@@ -54,12 +76,12 @@
                 {% endfor %}
             </ul>
             <p><strong>Duration:</strong> {{ duration }} seconds</p>
+
         </div>
 
         <div class="result">
             <h2>Additional Information:</h2>
             <p>Replace this with any additional information or analysis results you want to display.</p>
-            <p></p>
         </div>
     </div>
 
