@@ -60,9 +60,23 @@
     <div class="container">
         <h1 class="text-center mt-4">EDF File Processing Result</h1>
         
-        <div class="predict-button">
+        <!-- <div class="predict-button">
             <form method="post" enctype="multipart/form-data" action="{{ url_for('predict_file') }}">
-                <button type="submit" class="btn btn-primary">Predict for Seizure </button>
+                <button type="submit" class="btn btn-primary">Predict for Seizure </buttonf>
+            </form>
+        </div> -->
+
+        <div class="d-flex justify-content-center mt-4">
+            <form method="post" enctype="multipart/form-data" action="{{ url_for('predict_file') }}" class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="montage" class="mr-2">Montage of EDF:</label>
+                    <select class="form-control" id="montage" name="montage">
+                        {% for montage in montages %}
+                            <option value="{{ montage }}">{{ montage }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary ml-2 mb-2">Predict for Seizure</button>
             </form>
         </div>
 

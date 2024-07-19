@@ -174,7 +174,7 @@ class EEGMontage:
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
-        
+
     def compute_differential_signals(self, data, montage_pairs):
         """
         Compute differential signals for each montage pair in the provided data.
@@ -199,9 +199,14 @@ class EEGMontage:
             else:
                 print(f"Warning: Columns {electrode_1} or {electrode_2} do not exist in the DataFrame and will be skipped.")
 
+        for col in ['A1-T3', 'T4-A2', 'A1-T3', 'T4-A2']:
+            if col not in differential_df.columns:
+                differential_df[col] = 0
+
         # Append original columns from data to differential_df
         for column in ['timestamp', 'file_path', 'label', 'confidence']:
             if column in data.columns:
                 differential_df[column] = data[column]
 
         return differential_df
+    

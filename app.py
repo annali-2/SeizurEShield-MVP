@@ -46,25 +46,28 @@ def extract_model(archive_path, extract_path):
 
 # Load Model
 def load_model(model_path, input_size, hidden_size, output_size, num_layers):
-    rnn_model = SimpleRNN(input_size, hidden_size, output_size, num_layers)
+    rnn_model = RNNLSTM(input_size, hidden_size, output_size, num_layers)
     state_dict = torch.load(model_path)
     rnn_model.load_state_dict(state_dict)
     rnn_model.eval()
     return rnn_model
 
 
-# Class for RNN model
-class SimpleRNN(nn.Module):
+# Class for RNNLSTM model
+class RNNLSTM(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, num_layers):
-        super(SimpleRNN, self).__init__()
+        super(RNNLSTM, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.rnn = nn.RNN(input_size, hidden_size, num_layers, batch_first=True)
+        self.lstm = nn.LSTM(hidden_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
         out, _ = self.rnn(x, h0)
+        out, _ = self.lstm(out, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
 
@@ -92,6 +95,8 @@ def process_file(filepath):
     duration = raw.times[-1]
     return {"channels": channels, "duration": duration}
 
+montages = ['01_tcp_ar', '02_tcp_le', '03_tcp_ar_a', '04_tcp_le_a', 'hello']
+
 # Upload EEG file 
 @app.route("/upload_file", methods=["POST"])
 def upload_file():
@@ -111,6 +116,7 @@ def upload_file():
         output = process_file(os.path.join(app.config["UPLOAD_FOLDER"], filename))
         return render_template(
             "results.html",
+            montages=montages,
             filename=filename,
             channels=output["channels"],
             duration=output["duration"],
@@ -141,13 +147,19 @@ def predict_file():
     # Load the model
     model = load_model(model_path, input_size, hidden_size, output_size, num_layers)
 
+    selected_montage = request.form.get('montage')
+
     # loop through the files but the assumption for now is that there is only one file
     for file in uploaded_files:
 
         # Get file from uploads and preprocess them
         eeg_montage = EEGMontage()
         edf_csv = eeg_montage.read_edf_to_dataframe(os.path.join("uploads", file))
-        montage = eeg_montage.montage_pairs_01_tcp_ar
+
+        if selected_montage in eeg_montage.montage_dict:
+            montage = eeg_montage.montage_dict[selected_montage]
+        else: 
+            raise ValueError(f"Selected montage '{selected_montage}' is not available")
         edf_preprocessed = eeg_montage.compute_differential_signals(edf_csv, montage)
         edf_preprocessed2 = (
             edf_preprocessed.fillna(0).drop(columns=["file_path"]).values
