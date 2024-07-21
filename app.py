@@ -211,9 +211,10 @@ def visual(filename):
     df_melted = df_filtered.melt(id_vars=['timestamp'], var_name='Channel', value_name='Amplitude')
 
     eeg_chart = alt.Chart(df_melted).mark_line().encode(
-        x=alt.X('timestamp', title='Timestamp (seconds)'),  # Rename x-axis to 'Time'
-        y='Amplitude',
-        color=alt.Color('Channel', scale=alt.Scale(domain=eeg_columns, range=[colors[ch] for ch in eeg_columns])),
+        x=alt.X('timestamp', title='Timestamp (seconds)', axis=alt.Axis(titleFontSize=16, labelFontSize=14)),  # Adjust x-axis title and label font size
+        y=alt.Y('Amplitude', title='Amplitude', axis=alt.Axis(titleFontSize=16, labelFontSize=14)),  # Adjust y-axis title and label font size
+        color=alt.Color('Channel', scale=alt.Scale(domain=eeg_columns, range=[colors[ch] for ch in eeg_columns]), 
+                        legend=alt.Legend(title="EEG Channels", titleFontSize=16, labelFontSize=14)),
         tooltip=['timestamp', 'Channel', 'Amplitude']
     ).properties(
         width=1000,
@@ -232,3 +233,4 @@ def visual(filename):
 
     chart_json = combined_chart.to_json()  # Serialize the chart to JSON
     return render_template("eeg_chart.html", title="EEG Data Visualization", chart_json=chart_json)
+
