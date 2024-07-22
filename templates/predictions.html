@@ -92,7 +92,13 @@
     </div>
 
     <div class="container">
-        <h3 class="text-center mt-4">First 10 Rows of Signals and Predictions</h3>
+        <h3 class="text-center mt-4">Prediction Results of Signals</h3>
+        <div class="visual-button">
+            {% for info in additional_info %}
+                <a class="btn btn-primary" href="{{ url_for('visual', filename=info.processed_file_name) }}" role="button">View Visualization</a>
+            {% endfor %}
+        </div>
+        <br/>
         <div style="overflow-x: auto;">
             <table>
                 <thead>
@@ -160,11 +166,6 @@
 
         <div class="result">
             <h2>Additional Information:</h2>
-            <div class="visual-button">
-                {% for info in additional_info %}
-                    <a class="btn btn-primary" href="{{ url_for('visual', filename=info.processed_file_name) }}" role="button">View Visualization</a>
-                {% endfor %}
-            </div>
             <div class="additional-info">
                 <ul>
                     {% for info in additional_info %}
