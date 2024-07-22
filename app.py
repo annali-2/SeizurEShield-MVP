@@ -207,41 +207,42 @@ def download_file(filename):
     return send_from_directory(data_folder, processed_filename, as_attachment=True)
 
 
-# Get Altair Visual 
 @app.route("/visual/<filename>")
 def visual(filename):
     processed_filename = f"data/{filename}"
-    # Sample data similar to the one you provided
     data = pd.read_csv(processed_filename)
-    # Create a DataFrame
     df = pd.DataFrame(data)
     
-    # Select columns related to EEG channels
     eeg_columns = ['FP1-F7', 'F7-T3', 'T3-T5', 'T5-O1', 'FP2-F8', 'F8-T4', 'T4-T6', 'T6-O2',
                 'A1-T3', 'T3-C3', 'C3-CZ', 'CZ-C4', 'C4-T4', 'T4-A2', 'FP1-F3', 'F3-C3',
                 'C3-P3', 'P3-O1', 'FP2-F4', 'F4-C4', 'C4-P4', 'P4-O2']
 
-    colors = {}
-    for channel in eeg_columns:
-        colors[channel] = "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    colors = {channel: "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for channel in eeg_columns}
 
-    # Filter the DataFrame to include only EEG-related columns
-    df_filtered = df[['timestamp'] + eeg_columns]
-
-    # Melt the DataFrame to reshape it
+    df_filtered = df[['timestamp'] + eeg_columns + ['predicted_class']]
     df_melted = df_filtered.melt(id_vars=['timestamp'], var_name='Channel', value_name='Amplitude')
 
-    # Create an Altair chart with custom colors
-    chart = alt.Chart(df_melted).mark_line().encode(
-        x='timestamp',
-        y='Amplitude',
-        color=alt.Color('Channel', scale=alt.Scale(domain=eeg_columns, range=[colors[ch] for ch in eeg_columns])),
+    eeg_chart = alt.Chart(df_melted).mark_line().encode(
+        x=alt.X('timestamp', title='Timestamp (seconds)', axis=alt.Axis(titleFontSize=16, labelFontSize=14)),  # Adjust x-axis title and label font size
+        y=alt.Y('Amplitude', title='Amplitude', axis=alt.Axis(titleFontSize=16, labelFontSize=14)),  # Adjust y-axis title and label font size
+        color=alt.Color('Channel', scale=alt.Scale(domain=eeg_columns, range=[colors[ch] for ch in eeg_columns]), 
+                        legend=alt.Legend(title="EEG Channels", titleFontSize=16, labelFontSize=14)),
         tooltip=['timestamp', 'Channel', 'Amplitude']
     ).properties(
-        width=800,
-        height=400,
-        title='EEG Data'
+        width=1000,
+        height=500,
     ).interactive()
-    chart.save('templates/eeg_chart.html')
-    return render_template("eeg_chart.html")
+
+    seizure_chart = alt.Chart(df_filtered[df_filtered['predicted_class'] == 1]).mark_rule(
+        color='pink',
+        opacity=0.075
+    ).encode(
+        x='timestamp',
+        size=alt.value(2)
+    )
+
+    combined_chart = alt.layer(eeg_chart, seizure_chart).interactive()
+
+    chart_json = combined_chart.to_json()  # Serialize the chart to JSON
+    return render_template("eeg_chart.html", title="EEG Data Visualization", chart_json=chart_json)
 
