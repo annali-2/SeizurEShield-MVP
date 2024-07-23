@@ -25,17 +25,17 @@ It's recommended to create a virtual environment to manage dependencies.
 
 3. Activate the Virtual Environment
     
-    On Windows:
+    * On Windows:
 
-    ```
-    venv\Scripts\activate
-    ```
+        ```
+        venv\Scripts\activate
+        ```
 
-    On macOS/Linux:
+    * On macOS/Linux:
 
-    ```
-    source venv/bin/activate
-    ```
+        ```
+        source venv/bin/activate
+        ```
 
 4. Install Dependencies
 
