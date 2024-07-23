@@ -61,7 +61,7 @@ It's recommended to create a virtual environment to manage dependencies.
 
     Open your web browser and go to http://127.0.0.1:5000/ to access the application.
 
-Usage
+### Usage
 * Upload EEG File: Navigate to the upload page and upload a .edf file.
 * Process and Analyze: After uploading, the app processes the file and displays the channels and duration.
 * Run Predictions: Select a montage and run predictions on the processed data.
