@@ -59,6 +59,10 @@
   </div>
     <div class="container mt-4">
       <h1 class="text-center">{{ title }}</h1>
+      <p>This visualization displays the EEG signals over time, providing a comprehensive view of the brain's electrical activity. 
+        Each signal is plotted on the graph with a unique color, which is highlighted in the legend for easy identification. 
+        At each timestamp where our predictive model detects a seizure, a vertical pink/red line is drawn, highlighting 
+        these critical moments. This helps in quickly identifying periods of abnormal activity within the overall recording.</p>
       <div id="vis" class="hidden"></div> 
     </div>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5.17.0/build/vega.js"></script>

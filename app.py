@@ -97,7 +97,7 @@ def process_file(filepath):
     duration = raw.times[-1]
     return {"channels": channels, "duration": duration}
 
-montages = ['01_tcp_ar', '02_tcp_le', '03_tcp_ar_a', '04_tcp_le_a', 'hello']
+montages = ['01_tcp_ar', '02_tcp_le', '03_tcp_ar_a', '04_tcp_le_a']
 
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
