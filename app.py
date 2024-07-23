@@ -18,6 +18,7 @@ from flask import (
     url_for,
     flash,
     send_from_directory,
+    session
 )
 from werkzeug.utils import secure_filename
 
@@ -29,6 +30,7 @@ app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads/"
 app.config["DATA_FOLDER"] = "data/"
 app.config["ALLOWED_EXTENSIONS"] = {"edf"}
+app.secret_key = os.urandom(24)  # Set a unique and secret key
 
 # Safeguard against malicious file uplaods
 def allowed_file(filename):
@@ -97,107 +99,125 @@ def process_file(filepath):
 
 montages = ['01_tcp_ar', '02_tcp_le', '03_tcp_ar_a', '04_tcp_le_a', 'hello']
 
-# Upload EEG file 
-@app.route("/upload_file", methods=["POST"])
+@app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
-    if "file" not in request.files:
-        flash("No file part")
-        return redirect(request.url)
-    file = request.files["file"]
-    if file.filename == "":
-        flash("No selected file")
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        # Ensure the uploads directory exists
-        os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-        # Process the .edf file and generate output using MNE-Python
-        output = process_file(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-        return render_template(
-            "results.html",
-            montages=montages,
-            filename=filename,
-            channels=output["channels"],
-            duration=output["duration"],
-        )
-    else:
-        flash("File type not allowed")
-        return redirect(request.url)
+    if request.method == 'POST':
+        if "file" not in request.files:
+            flash("No file part")
+            return redirect(request.url)
+        file = request.files["file"]
+        if file.filename == "":
+            flash("No selected file")
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            # Ensure the uploads directory exists
+            os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            session['uploaded_file'] = filename  # Store the filename in session
+            # Process the .edf file and generate output using MNE-Python
+            output = process_file(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            return render_template(
+                "results.html",
+                montages=montages,
+                filename=filename,
+                channels=output["channels"],
+                duration=output["duration"],
+            )
+        else:
+            flash("File type not allowed")
+            return redirect(request.url)
+    else:  # GET request
+        filename = session.get('uploaded_file')
+        if filename:
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            if os.path.exists(filepath):
+                output = process_file(filepath)
+                return render_template(
+                    "results.html",
+                    montages=montages,
+                    filename=filename,
+                    channels=output["channels"],
+                    duration=output["duration"],
+                )
+            else:
+                flash("File not found")
+                return redirect(url_for('upload_eeg'))
+        else:
+            flash("No file uploaded yet")
+            return redirect(url_for('upload_eeg'))
 
 # Run Model Prediction 
-@app.route("/predict_file", methods=["POST"])
+@app.route("/predict_file", methods=["GET", "POST"])
 def predict_file():
+    if request.method == "POST":
+        uploaded_files = os.listdir("uploads")
+        additional_info = []
 
-    uploaded_files = os.listdir("uploads")
-    additional_info = []
+        # Extract the model archive
+        archive_path = "model.tar.gz"
+        extract_path = "./model_dir"
+        extract_model(archive_path, extract_path)
+        model_path = os.path.join(extract_path, "model.pth")
 
-    # Extract the model archive
-    archive_path = "model.tar.gz"
-    extract_path = "./model_dir"
-    extract_model(archive_path, extract_path)
-    model_path = os.path.join(extract_path, "model.pth")
+        # Define model parameters (these should match those used during training)
+        input_size = 23
+        hidden_size = 128
+        output_size = 2
+        num_layers = 2
 
-    # Define model parameters (these should match those used during training)
-    input_size = 23
-    hidden_size = 128
-    output_size = 2
-    num_layers = 2
+        # Load the model
+        model = load_model(model_path, input_size, hidden_size, output_size, num_layers)
 
-    # Load the model
-    model = load_model(model_path, input_size, hidden_size, output_size, num_layers)
+        selected_montage = request.form.get('montage')
+        session['selected_montage'] = selected_montage
 
-    selected_montage = request.form.get('montage')
+        # loop through the files but the assumption for now is that there is only one file
+        for file in uploaded_files:
+            # Get file from uploads and preprocess them
+            eeg_montage = EEGMontage()
+            edf_csv = eeg_montage.read_edf_to_dataframe(os.path.join("uploads", file))
 
-    # loop through the files but the assumption for now is that there is only one file
-    for file in uploaded_files:
+            if selected_montage in eeg_montage.montage_dict:
+                montage = eeg_montage.montage_dict[selected_montage]
+            else:
+                raise ValueError(f"Selected montage '{selected_montage}' is not available")
+            edf_preprocessed = eeg_montage.compute_differential_signals(edf_csv, montage)
+            edf_preprocessed2 = edf_preprocessed.fillna(0).drop(columns=["file_path"]).values
 
-        # Get file from uploads and preprocess them
-        eeg_montage = EEGMontage()
-        edf_csv = eeg_montage.read_edf_to_dataframe(os.path.join("uploads", file))
+            # make predictions
+            data = torch.stack([torch.tensor(d).float() for d in edf_preprocessed2])
+            data = data.view(data.size(0), 1, input_size)
+            prediction = model(data)
+            probabilities = torch.softmax(prediction, dim=1)  # Softmax to get probabilities
+            predicted_classes = torch.argmax(probabilities, dim=1)  # Predicted class indices (0 or 1)
 
-        if selected_montage in eeg_montage.montage_dict:
-            montage = eeg_montage.montage_dict[selected_montage]
-        else: 
-            raise ValueError(f"Selected montage '{selected_montage}' is not available")
-        edf_preprocessed = eeg_montage.compute_differential_signals(edf_csv, montage)
-        edf_preprocessed2 = (
-            edf_preprocessed.fillna(0).drop(columns=["file_path"]).values
-        )
+            # add predictions to the preprocessed files
+            predicted_classes_series = pd.Series(predicted_classes.numpy(), name="predicted_class")
+            edf_preprocessed_with_classes = edf_preprocessed.assign(predicted_class=predicted_classes_series)
+            predictions = edf_preprocessed_with_classes.head(10).to_dict(orient="records")
 
-        # make predictions
-        data = torch.stack([torch.tensor(d).float() for d in edf_preprocessed2])
-        data = data.view(data.size(0), 1, input_size)
-        prediction = model(data)
-        probabilities = torch.softmax(prediction, dim=1)  # Softmax to get probabilities
-        predicted_classes = torch.argmax(
-            probabilities, dim=1
-        )  # Predicted class indices (0 or 1)
+            filename_processed = f"{file.split('.')[0]}_processed.csv"
+            processed_path = os.path.join(app.config["DATA_FOLDER"], filename_processed)
+            edf_preprocessed_with_classes.to_csv(processed_path, index=False)
 
-        # add predictions to the preprocessed files
-        predicted_classes_series = pd.Series(
-            predicted_classes.numpy(), name="predicted_class"
-        )
-        edf_preprocessed_with_classes = edf_preprocessed.assign(
-            predicted_class=predicted_classes_series
-        )
-        predictions = edf_preprocessed_with_classes.head(10).to_dict(orient="records")
-
-        filename_processed = f"{file.split('.')[0]}_processed.csv"
-        processed_path = os.path.join(app.config["DATA_FOLDER"], filename_processed)
-        edf_preprocessed_with_classes.to_csv(processed_path, index=False)
-
-        additional_info.append(
-            {
+            additional_info.append({
                 "file_name": file,
                 "processed_file_name": f"{file.split('.')[0]}_processed.csv",
                 "duration": 10.5,  # Example duration
-            }
-        )
+            })
 
-    return render_template(
-        "predictions.html", predictions=predictions, additional_info=additional_info
-    )
+        session['predictions'] = predictions
+        session['additional_info'] = additional_info
+        return render_template("predictions.html", predictions=predictions, additional_info=additional_info)
+    else:
+        predictions = session.get('predictions')
+        additional_info = session.get('additional_info')
+        if predictions and additional_info:
+            return render_template("predictions.html", predictions=predictions, additional_info=additional_info)
+        else:
+            flash("No predictions available. Please upload a file and run the prediction first.")
+            return redirect(url_for('upload_eeg'))
 
 # Download Prediction CSV
 @app.route("/download/<path:filename>", methods=["GET"])
@@ -244,5 +264,5 @@ def visual(filename):
     combined_chart = alt.layer(eeg_chart, seizure_chart).interactive()
 
     chart_json = combined_chart.to_json()  # Serialize the chart to JSON
-    return render_template("eeg_chart.html", title="EEG Data Visualization", chart_json=chart_json)
+    return render_template("eeg_chart.html", title="EEG Data Visualization", chart_json=chart_json, filename=filename)
 
