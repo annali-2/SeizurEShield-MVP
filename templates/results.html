@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>EDF File Processing Result</title>
@@ -14,6 +15,7 @@
             background-position: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .result {
             margin-top: 20px;
             padding: 20px;
@@ -21,17 +23,21 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+
         .result h2 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         .result p {
             margin-bottom: 10px;
         }
+
         .predict-button {
             text-align: center;
             margin-top: 20px;
         }
+
         .predict-button button {
             padding: 10px 20px;
             font-size: 18px;
@@ -41,24 +47,32 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .predict-button button:hover {
             background-color: #0056b3;
         }
 
         .channel-list ul {
-            column-count: 3; /* Adjust the number of columns as needed */
-            column-gap: 20px; /* Adjust the gap between columns */
-            list-style-type: disc; /* Add bullet points */
-            padding-left: 20px; /* Adjust the padding to align bullets */
-            margin: 0; /* Remove default margin */
+            column-count: 3;
+            /* Adjust the number of columns as needed */
+            column-gap: 20px;
+            /* Adjust the gap between columns */
+            list-style-type: disc;
+            /* Add bullet points */
+            padding-left: 20px;
+            /* Adjust the padding to align bullets */
+            margin: 0;
+            /* Remove default margin */
             padding-bottom: 5px;
         }
 
         .channel-list li {
-            break-inside: avoid; /* Prevent columns from breaking inside list items */
+            break-inside: avoid;
+            /* Prevent columns from breaking inside list items */
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <a href="/" class="logo">Home</a>
@@ -71,21 +85,24 @@
 
     <div class="container">
         <h1 class="text-center mt-4">EDF File Processing Result</h1>
-        <p> A montage in EEG recording refers to the specific arrangement of electrodes on the scalp, and the way the 
-            electrical signals are referenced and displayed. Different montages can highlight different aspects of brain 
+        <p> A montage in EEG recording refers to the specific arrangement of electrodes on the scalp, and the way the
+            electrical signals are referenced and displayed. Different montages can highlight different aspects of brain
             activity, making it easier to identify specific patterns or anomalies. <br><br>
-            
-            Our platform provides a selection of montages derived from the Temple University Hospital (TUH) EEG Corpus, 
-            one of the largest and most comprehensive datasets for EEG research. By choosing an appropriate montage, 
-            you can tailor the predictions and visualization to better suit your analysis needs. Once you have selected 
-            a montage, click the "Predict for Seizure" button to proceed with the analysis based on your chosen configuration.<br></p>
+
+            Our platform provides a selection of montages derived from the Temple University Hospital (TUH) EEG Corpus,
+            one of the largest and most comprehensive datasets for EEG research. By choosing an appropriate montage,
+            you can tailor the predictions and visualization to better suit your analysis needs. Once you have selected
+            a montage, click the "Predict for Seizure" button to proceed with the analysis based on your chosen
+            configuration.<br></p>
+
         <div class="d-flex mt-4">
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('predict_file') }}" class="form-inline">
+            <form method="post" enctype="multipart/form-data" action="{{ url_for('predict_file') }}"
+                class="form-inline">
                 <div class="form-group mb-2">
                     <label for="montage" class="mr-2"><strong>Montage of EDF:</strong></label>
                     <select class="form-control" id="montage" name="montage">
                         {% for montage in montages %}
-                            <option value="{{ montage }}">{{ montage }}</option>
+                        <option value="{{ montage }}">{{ montage }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -100,12 +117,12 @@
             <div class="channel-list">
                 <ul>
                     {% for channel in channels %}
-                        <li>{{ channel }}</li>
+                    <li>{{ channel }}</li>
                     {% endfor %}
                 </ul>
             </div>
             <p><strong>Duration:</strong> {{ duration }} seconds</p>
-        </div>        
+        </div>
 
         <br><br>
     </div>
@@ -117,4 +134,5 @@
         integrity="sha384-+MdAjzJUN4tcaJQqpBxiHp2Adp4y0pVd/iJ5lDsd4DP7xP+l3jpKsUJ0lLtzxbFQ"
         crossorigin="anonymous"></script>
 </body>
+
 </html>

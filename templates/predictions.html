@@ -84,28 +84,39 @@
             text-align: center;
         }
 
-   
+
         .description-text {
-            font-size: 1.1em; /* Increase the font size as needed */
-            margin-bottom: 5px; /* Optional: Add spacing below the paragraph */
+            font-size: 1.1em;
+            /* Increase the font size as needed */
+            margin-bottom: 5px;
+            /* Optional: Add spacing below the paragraph */
         }
 
         .description-list {
-            font-size: 1.1em; /* Increase the font size as needed */
-            margin-top: 0; /* Remove default margin-top if needed */
-            margin-bottom: 10px; /* Optional: Add spacing below the list */
+            font-size: 1.1em;
+            /* Increase the font size as needed */
+            margin-top: 0;
+            /* Remove default margin-top if needed */
+            margin-bottom: 10px;
+            /* Optional: Add spacing below the list */
         }
 
         .description-list li {
-            margin-bottom: 0px; /* Optional: Add spacing between list items */
+            margin-bottom: 0px;
+            /* Optional: Add spacing between list items */
         }
 
         .header-container {
-            display: flex; /* Use flexbox to align items horizontally */
-            align-items: center; /* Vertically center the items */
-            justify-content: center; /* Center items horizontally */
-            gap: 100px; /* Ad space between button and header */
-            margin-bottom: 0px; /* Add spacing below the header-container */
+            display: flex;
+            /* Use flexbox to align items horizontally */
+            align-items: center;
+            /* Vertically center the items */
+            justify-content: center;
+            /* Center items horizontally */
+            gap: 100px;
+            /* Ad space between button and header */
+            margin-bottom: 0px;
+            /* Add spacing below the header-container */
             margin-right: 200px;
         }
 
@@ -135,22 +146,30 @@
         <p class="description-text">Review the output of the analysis:</p>
 
         <ul class="description-list">
-            <li><strong>View Visualization:</strong> Click this button to access a graphical representation of the predicted seizures.</li>
-            <li><strong>Prediction Table:</strong> Below the button, you'll find a table displaying the first 10 rows of prediction results.</li>
-            <li><strong>Download CSV:</strong> At the bottom of the page, you can download a CSV file containing all prediction data.</li>
+            <li><strong>View Visualization:</strong> Click this button to access a graphical representation of the
+                predicted seizures.</li>
+            <li><strong>Prediction Table:</strong> Below the button, you'll find a table displaying the first 10 rows of
+                prediction results.</li>
+            <li><strong>Download CSV:</strong> At the bottom of the page, you can download a CSV file containing all
+                prediction data.</li>
         </ul>
 
         <br />
+        <center>
+            <div class="visual-button">
+                {% for info in additional_info %}
+                <a class="btn btn-primary" href="{{ url_for('visual', filename=info.processed_file_name) }}"
+                    role="button">View Visualization</a>
+                {% endfor %}
+            </div>
+        </center>
+        <br />
+
         <div class="result">
             <div class="header-container">
-                <div class="visual-button">
-                    {% for info in additional_info %}
-                    <a class="btn btn-primary" href="{{ url_for('visual', filename=info.processed_file_name) }}" role="button">View Visualization</a>
-                    {% endfor %}
-                </div>
                 <h4 class="text-center mt-4">First 10 Prediction Rows</h4>
             </div>
-            <br/>
+            <br />
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
