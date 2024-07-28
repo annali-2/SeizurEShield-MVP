@@ -123,7 +123,7 @@ def upload_file():
             # Ensure the uploads directory exists
             os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-            session["uploaded_file"] = filename  
+            session["uploaded_file"] = filename
 
             # Process the .edf file and generate output using MNE-Python
             output = process_file(os.path.join(app.config["UPLOAD_FOLDER"], filename))
@@ -137,7 +137,7 @@ def upload_file():
         else:
             flash("File type not allowed")
             return redirect(request.url)
-    else: 
+    else:
         filename = session.get("uploaded_file")
         if filename:
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -161,99 +161,113 @@ def upload_file():
 # Run Model Prediction
 @app.route("/predict_file", methods=["GET", "POST"])
 def predict_file():
-    if request.method == "POST":
-        uploaded_files = os.listdir("uploads")
-        additional_info = []
+    try:
+        if request.method == "POST":
+            uploaded_files = os.listdir("uploads")
+            additional_info = []
 
-        archive_path = "model.tar.gz"
-        extract_path = "./model_dir"
-        extract_model(archive_path, extract_path)
-        model_path = os.path.join(extract_path, "model.pth")
+            archive_path = "model.tar.gz"
+            extract_path = "./model_dir"
+            extract_model(archive_path, extract_path)
+            model_path = os.path.join(extract_path, "model.pth")
 
-        # Define model parameters (these should match those used during training)
-        input_size = 23
-        hidden_size = 128
-        output_size = 2
-        num_layers = 2
+            # Define model parameters (these should match those used during training)
+            input_size = 23
+            hidden_size = 128
+            output_size = 2
+            num_layers = 2
 
-        # Load the model
-        model = load_model(model_path, input_size, hidden_size, output_size, num_layers)
+            # Load the model
+            model = load_model(
+                model_path, input_size, hidden_size, output_size, num_layers
+            )
 
-        selected_montage = request.form.get("montage")
-        session["selected_montage"] = selected_montage
+            selected_montage = request.form.get("montage")
+            session["selected_montage"] = selected_montage
 
-        # loop through the files but the assumption for now is that there is only one file
-        for file in uploaded_files:
-            # Get file from uploads and preprocess them
-            eeg_montage = EEGMontage()
-            edf_csv = eeg_montage.read_edf_to_dataframe(os.path.join("uploads", file))
-
-            if selected_montage in eeg_montage.montage_dict:
-                montage = eeg_montage.montage_dict[selected_montage]
-            else:
-                raise ValueError(
-                    f"Selected montage '{selected_montage}' is not available"
+            # loop through the files but the assumption for now is that there is only one file
+            for file in uploaded_files:
+                # Get file from uploads and preprocess them
+                eeg_montage = EEGMontage()
+                edf_csv = eeg_montage.read_edf_to_dataframe(
+                    os.path.join("uploads", file)
                 )
-            edf_preprocessed = eeg_montage.compute_differential_signals(
-                edf_csv, montage
-            )
-            edf_preprocessed2 = (
-                edf_preprocessed.fillna(0).drop(columns=["file_path"]).values
-            )
 
-            # make predictions
-            data = torch.stack([torch.tensor(d).float() for d in edf_preprocessed2])
-            data = data.view(data.size(0), 1, input_size)
-            prediction = model(data)
-            probabilities = torch.softmax(
-                prediction, dim=1
-            )  # Softmax to get probabilities
-            predicted_classes = torch.argmax(
-                probabilities, dim=1
-            )  # Predicted class indices (0 or 1)
+                if selected_montage in eeg_montage.montage_dict:
+                    montage = eeg_montage.montage_dict[selected_montage]
+                else:
+                    raise ValueError(
+                        f"Selected montage '{selected_montage}' is not available"
+                    )
+                edf_preprocessed = eeg_montage.compute_differential_signals(
+                    edf_csv, montage
+                )
+                edf_preprocessed2 = (
+                    edf_preprocessed.fillna(0).drop(columns=["file_path"]).values
+                )
 
-            # add predictions to the preprocessed files
-            predicted_classes_series = pd.Series(
-                predicted_classes.numpy(), name="predicted_class"
-            )
-            edf_preprocessed_with_classes = edf_preprocessed.assign(
-                predicted_class=predicted_classes_series
-            )
-            predictions = edf_preprocessed_with_classes.head(10).to_dict(
-                orient="records"
-            )
+                # make predictions
+                data = torch.stack([torch.tensor(d).float() for d in edf_preprocessed2])
+                data = data.view(data.size(0), 1, input_size)
+                prediction = model(data)
+                probabilities = torch.softmax(
+                    prediction, dim=1
+                )  # Softmax to get probabilities
+                predicted_classes = torch.argmax(
+                    probabilities, dim=1
+                )  # Predicted class indices (0 or 1)
 
-            filename_processed = f"{file.split('.')[0]}_processed.csv"
-            processed_path = os.path.join(app.config["DATA_FOLDER"], filename_processed)
-            edf_preprocessed_with_classes.to_csv(processed_path, index=False)
+                # add predictions to the preprocessed files
+                predicted_classes_series = pd.Series(
+                    predicted_classes.numpy(), name="predicted_class"
+                )
+                edf_preprocessed_with_classes = edf_preprocessed.assign(
+                    predicted_class=predicted_classes_series
+                )
+                predictions = edf_preprocessed_with_classes.head(10).to_dict(
+                    orient="records"
+                )
 
-            additional_info.append(
-                {
-                    "file_name": file,
-                    "processed_file_name": f"{file.split('.')[0]}_processed.csv",
-                    "duration": 10.5,  # Example duration
-                }
-            )
+                filename_processed = f"{file.split('.')[0]}_processed.csv"
+                processed_path = os.path.join(
+                    app.config["DATA_FOLDER"], filename_processed
+                )
+                edf_preprocessed_with_classes.to_csv(processed_path, index=False)
 
-        session["predictions"] = predictions
-        session["additional_info"] = additional_info
-        return render_template(
-            "predictions.html", predictions=predictions, additional_info=additional_info
-        )
-    else:
-        predictions = session.get("predictions")
-        additional_info = session.get("additional_info")
-        if predictions and additional_info:
+                additional_info.append(
+                    {
+                        "file_name": file,
+                        "processed_file_name": f"{file.split('.')[0]}_processed.csv",
+                        "duration": 10.5,  # Example duration
+                    }
+                )
+
+            session["predictions"] = predictions
+            session["additional_info"] = additional_info
             return render_template(
                 "predictions.html",
                 predictions=predictions,
                 additional_info=additional_info,
             )
         else:
-            flash(
-                "No predictions available. Please upload a file and run the prediction first."
-            )
-            return redirect(url_for("upload_eeg"))
+            predictions = session.get("predictions")
+            additional_info = session.get("additional_info")
+            if predictions and additional_info:
+                return render_template(
+                    "predictions.html",
+                    predictions=predictions,
+                    additional_info=additional_info,
+                )
+            else:
+                flash(
+                    "No predictions available. Please upload a file and run the prediction first."
+                )
+                return redirect(url_for("upload_eeg"))
+    except:
+        flash(
+            "No predictions available. Please upload a file and choose another montage."
+        )
+        return redirect(url_for("upload_eeg"))
 
 
 # Download Prediction CSV
@@ -262,6 +276,7 @@ def download_file(filename):
     data_folder = app.config["DATA_FOLDER"]
     processed_filename = f"{filename.split('.')[0]}_processed.csv"
     return send_from_directory(data_folder, processed_filename, as_attachment=True)
+
 
 # Altair Visual
 @app.route("/visual/<filename>")
@@ -315,12 +330,12 @@ def visual(filename):
                 "timestamp",
                 title="Timestamp (seconds)",
                 axis=alt.Axis(titleFontSize=16, labelFontSize=14),
-            ), 
+            ),
             y=alt.Y(
                 "Amplitude",
                 title="Amplitude",
                 axis=alt.Axis(titleFontSize=16, labelFontSize=14),
-            ),  
+            ),
             color=alt.Color(
                 "Channel",
                 scale=alt.Scale(
@@ -347,7 +362,7 @@ def visual(filename):
 
     combined_chart = alt.layer(eeg_chart, seizure_chart).interactive()
 
-    chart_json = combined_chart.to_json()  
+    chart_json = combined_chart.to_json()
     return render_template(
         "eeg_chart.html",
         title="EEG Data Visualization",
