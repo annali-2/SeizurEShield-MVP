@@ -1,270 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>Predictions</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/header.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" type="text/css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/header.css') }}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/styles.css') }}"
+      type="text/css"
+    />
     <style>
-        body {
-            background-size: cover;
-            background-position: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+      body {
+        background-size: cover;
+        background-position: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        th,
-        td {
-            padding: 12px 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
 
-        th {
-            background-color: #f0f0f0;
-        }
+      th {
+        background-color: #f0f0f0;
+      }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
 
-        tr:hover {
-            background-color: #ddd;
-        }
+      tr:hover {
+        background-color: #ddd;
+      }
 
-        .result {
-            margin-top: 10px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
+      .result {
+        margin-top: 10px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
 
-        .result h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+      .result h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-        .result p {
-            margin-bottom: 10px;
-        }
+      .result p {
+        margin-bottom: 10px;
+      }
 
-        .additional-info {
-            margin-top: 20px;
-        }
+      .additional-info {
+        margin-top: 20px;
+      }
 
-        .additional-info ul {
-            list-style-type: none;
-            padding: 0;
-        }
+      .additional-info ul {
+        list-style-type: none;
+        padding: 0;
+      }
 
-        .additional-info ul li {
-            margin-bottom: 10px;
-        }
+      .additional-info ul li {
+        margin-bottom: 10px;
+      }
 
-        .additional-info a {
-            color: #007bff;
-        }
+      .additional-info a {
+        color: #007bff;
+      }
 
-        .footer {
-            margin-top: 20px;
-            padding: 20px 0;
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-        }
+      .footer {
+        margin-top: 20px;
+        padding: 20px 0;
+        background-color: #343a40;
+        color: white;
+        text-align: center;
+      }
 
+      .description-text {
+        font-size: 1.1em;
+        /* Increase the font size as needed */
+        margin-bottom: 5px;
+        /* Optional: Add spacing below the paragraph */
+      }
 
-        .description-text {
-            font-size: 1.1em;
-            /* Increase the font size as needed */
-            margin-bottom: 5px;
-            /* Optional: Add spacing below the paragraph */
-        }
+      .description-list {
+        font-size: 1.1em;
+        /* Increase the font size as needed */
+        margin-top: 0;
+        /* Remove default margin-top if needed */
+        margin-bottom: 10px;
+        /* Optional: Add spacing below the list */
+      }
 
-        .description-list {
-            font-size: 1.1em;
-            /* Increase the font size as needed */
-            margin-top: 0;
-            /* Remove default margin-top if needed */
-            margin-bottom: 10px;
-            /* Optional: Add spacing below the list */
-        }
+      .description-list li {
+        margin-bottom: 0px;
+        /* Optional: Add spacing between list items */
+      }
 
-        .description-list li {
-            margin-bottom: 0px;
-            /* Optional: Add spacing between list items */
-        }
+      .header-container {
+        display: flex;
+        /* Use flexbox to align items horizontally */
+        align-items: center;
+        /* Vertically center the items */
+        justify-content: center;
+        /* Center items horizontally */
+        gap: 100px;
+        /* Ad space between button and header */
+        margin-bottom: 0px;
+        /* Add spacing below the header-container */
+        margin-right: 200px;
+      }
 
-        .header-container {
-            display: flex;
-            /* Use flexbox to align items horizontally */
-            align-items: center;
-            /* Vertically center the items */
-            justify-content: center;
-            /* Center items horizontally */
-            gap: 100px;
-            /* Ad space between button and header */
-            margin-bottom: 0px;
-            /* Add spacing below the header-container */
-            margin-right: 200px;
-        }
+      .visual-button a {
+        font-size: 1.1em;
+      }
 
-        .visual-button a {
-            font-size: 1.1em;
-        }
-
-        .result h4 {
-            margin-bottom: 20px;
-        }
+      .result h4 {
+        margin-bottom: 20px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="header">
-        <a href="/" class="logo">Home</a>
-        <div class="header-right">
-            <a href="/upload">Upload EEG</a>
-            <a href="/upload_file">File Info & Run Prediction</a>
-            <a href="/predict_file">Prediction Results</a>
-            <a href="https://arshiasharma4.github.io/SeizureEShield/" target="_blank">About Us</a>
-        </div>
+      <a href="/" class="logo">Home</a>
+      <div class="header-right">
+        <a href="/upload">Upload EEG</a>
+        <a href="/upload_file">File Info & Run Prediction</a>
+        <a href="/predict_file">Prediction Results</a>
+        <a
+          href="https://arshiasharma4.github.io/SeizureEShield/"
+          target="_blank"
+          >About Us</a
+        >
+      </div>
     </div>
 
     <div class="container">
-        <h3 class="text-center mt-4">Prediction Results of Signals</h3>
-        <p class="description-text">Review the output of the analysis:</p>
+      <h3 class="text-center mt-4">Prediction Results of Signals</h3>
+      <p class="description-text">Review the output of the analysis:</p>
 
-        <ul class="description-list">
-            <li><strong>View Visualization:</strong> Click this button to access a graphical representation of the
-                predicted seizures.</li>
-            <li><strong>Prediction Table:</strong> Below the button, you'll find a table displaying the first 10 rows of
-                prediction results.</li>
-            <li><strong>Download CSV:</strong> At the bottom of the page, you can download a CSV file containing all
-                prediction data.</li>
-        </ul>
+      <ul class="description-list">
+        <li>
+          <strong>View Visualization:</strong> Click this button to access a
+          graphical representation of the predicted seizures.
+        </li>
+        <li>
+          <strong>Prediction Table:</strong> Below the button, you'll find a
+          table displaying the first 10 rows of prediction results.
+        </li>
+        <li>
+          <strong>Download CSV:</strong> At the bottom of the page, you can
+          download a CSV file containing all prediction data.
+        </li>
+      </ul>
 
-        <br />
-        <center>
-            <div class="visual-button">
-                {% for info in additional_info %}
-                <a class="btn btn-primary" href="{{ url_for('visual', filename=info.processed_file_name) }}"
-                    role="button">View Visualization</a>
-                {% endfor %}
-            </div>
-        </center>
-        <br />
-
-        <div class="result">
-            <div class="header-container">
-                <h4 class="text-center mt-4">First 10 Prediction Rows</h4>
-            </div>
-            <br />
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>FP1-F7</th>
-                            <th>F7-T3</th>
-                            <th>T3-T5</th>
-                            <th>T5-O1</th>
-                            <th>FP2-F8</th>
-                            <th>F8-T4</th>
-                            <th>T4-T6</th>
-                            <th>T6-O2</th>
-                            <th>A1-T3</th>
-                            <th>T3-C3</th>
-                            <th>C3-CZ</th>
-                            <th>CZ-C4</th>
-                            <th>C4-T4</th>
-                            <th>T4-A2</th>
-                            <th>FP1-F3</th>
-                            <th>F3-C3</th>
-                            <th>C3-P3</th>
-                            <th>P3-O1</th>
-                            <th>FP2-F4</th>
-                            <th>F4-C4</th>
-                            <th>C4-P4</th>
-                            <th>P4-O2</th>
-                            <th>Timestamp</th>
-                            <th>File Path</th>
-                            <th>Predicted Class</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in predictions %}
-                        <tr>
-                            <td>{{ row['FP1-F7']|round(3) }}</td>
-                            <td>{{ row['F7-T3']|round(3) }}</td>
-                            <td>{{ row['T3-T5']|round(3) }}</td>
-                            <td>{{ row['T5-O1']|round(3) }}</td>
-                            <td>{{ row['FP2-F8']|round(3) }}</td>
-                            <td>{{ row['F8-T4']|round(3) }}</td>
-                            <td>{{ row['T4-T6']|round(3) }}</td>
-                            <td>{{ row['T6-O2']|round(3) }}</td>
-                            <td>{{ row['A1-T3']|round(3) }}</td>
-                            <td>{{ row['T3-C3']|round(3) }}</td>
-                            <td>{{ row['C3-CZ']|round(3) }}</td>
-                            <td>{{ row['CZ-C4']|round(3) }}</td>
-                            <td>{{ row['C4-T4']|round(3) }}</td>
-                            <td>{{ row['T4-A2']|round(3) }}</td>
-                            <td>{{ row['FP1-F3']|round(3) }}</td>
-                            <td>{{ row['F3-C3']|round(3) }}</td>
-                            <td>{{ row['C3-P3']|round(3) }}</td>
-                            <td>{{ row['P3-O1']|round(3) }}</td>
-                            <td>{{ row['FP2-F4']|round(3) }}</td>
-                            <td>{{ row['F4-C4']|round(3) }}</td>
-                            <td>{{ row['C4-P4']|round(3) }}</td>
-                            <td>{{ row['P4-O2']|round(3) }}</td>
-                            <td>{{ row['timestamp'] }}</td>
-                            <td>{{ row['file_path'] }}</td>
-                            <td>{{ row['predicted_class'] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+      <br />
+      <center>
+        <div class="visual-button">
+          {% for info in additional_info %}
+          <a
+            class="btn btn-primary"
+            href="{{ url_for('visual', filename=info.processed_file_name) }}"
+            role="button"
+            >View Visualization</a
+          >
+          {% endfor %}
         </div>
+      </center>
+      <br />
 
-        <div class="result">
-            <h2>Downloadable Files</h2>
-            <div class="additional-info">
-                <ul>
-                    {% for info in additional_info %}
-                    <li>Processed File: {{ info.file_name }}</li>
-                    <li>Download Predictions File: <a href="{{ url_for('download_file', filename=info.file_name) }}"> {{
-                            info.processed_file_name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
+      <div class="result">
+        <center><h4>First 10 Prediction Rows</h4></center>
+        <br />
+        <div style="overflow-x: auto">
+          <table>
+            <thead>
+              <tr>
+                <th>FP1-F7</th>
+                <th>F7-T3</th>
+                <th>T3-T5</th>
+                <th>T5-O1</th>
+                <th>FP2-F8</th>
+                <th>F8-T4</th>
+                <th>T4-T6</th>
+                <th>T6-O2</th>
+                <th>A1-T3</th>
+                <th>T3-C3</th>
+                <th>C3-CZ</th>
+                <th>CZ-C4</th>
+                <th>C4-T4</th>
+                <th>T4-A2</th>
+                <th>FP1-F3</th>
+                <th>F3-C3</th>
+                <th>C3-P3</th>
+                <th>P3-O1</th>
+                <th>FP2-F4</th>
+                <th>F4-C4</th>
+                <th>C4-P4</th>
+                <th>P4-O2</th>
+                <th>Timestamp</th>
+                <th>File Path</th>
+                <th>Predicted Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in predictions %}
+              <tr>
+                <td>{{ row['FP1-F7']|round(3) }}</td>
+                <td>{{ row['F7-T3']|round(3) }}</td>
+                <td>{{ row['T3-T5']|round(3) }}</td>
+                <td>{{ row['T5-O1']|round(3) }}</td>
+                <td>{{ row['FP2-F8']|round(3) }}</td>
+                <td>{{ row['F8-T4']|round(3) }}</td>
+                <td>{{ row['T4-T6']|round(3) }}</td>
+                <td>{{ row['T6-O2']|round(3) }}</td>
+                <td>{{ row['A1-T3']|round(3) }}</td>
+                <td>{{ row['T3-C3']|round(3) }}</td>
+                <td>{{ row['C3-CZ']|round(3) }}</td>
+                <td>{{ row['CZ-C4']|round(3) }}</td>
+                <td>{{ row['C4-T4']|round(3) }}</td>
+                <td>{{ row['T4-A2']|round(3) }}</td>
+                <td>{{ row['FP1-F3']|round(3) }}</td>
+                <td>{{ row['F3-C3']|round(3) }}</td>
+                <td>{{ row['C3-P3']|round(3) }}</td>
+                <td>{{ row['P3-O1']|round(3) }}</td>
+                <td>{{ row['FP2-F4']|round(3) }}</td>
+                <td>{{ row['F4-C4']|round(3) }}</td>
+                <td>{{ row['C4-P4']|round(3) }}</td>
+                <td>{{ row['P4-O2']|round(3) }}</td>
+                <td>{{ row['timestamp'] }}</td>
+                <td>{{ row['file_path'] }}</td>
+                <td>{{ row['predicted_class'] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+      </div>
+
+      <div class="result">
+        <h2>Downloadable Files</h2>
+        <div class="additional-info">
+          <ul>
+            {% for info in additional_info %}
+            <li>Processed File: {{ info.file_name }}</li>
+            <li>
+              Download Predictions File:
+              <a href="{{ url_for('download_file', filename=info.file_name) }}">
+                {{ info.processed_file_name }}</a
+              >
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
 
-    <br>
+    <br />
 
     <footer class="py-5 bg-dark">
-        <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; SeizurEShield 2024</p>
-        </div>
+      <div class="container">
+        <p class="m-0 text-center text-white">
+          Copyright &copy; SeizurEShield 2024
+        </p>
+      </div>
     </footer>
 
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-+MdAjzJUN4tcaJQqpBxiHp2Adp4y0pVd/iJ5lDsd4DP7xP+l3jpKsUJ0lLtzxbFQ"
-        crossorigin="anonymous"></script>
-</body>
-
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-+MdAjzJUN4tcaJQqpBxiHp2Adp4y0pVd/iJ5lDsd4DP7xP+l3jpKsUJ0lLtzxbFQ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
