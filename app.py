@@ -95,7 +95,7 @@ def predict_eeg():
     return render_template("predict.html")
 
 
-# Process File for EGG stats/description
+# Process File for eeg stats/description
 def process_file(filepath):
     raw = mne.io.read_raw_edf(filepath)
     info = raw.info
