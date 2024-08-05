@@ -12,7 +12,7 @@ This repository contains a Flask web application for uploading EEG files, proces
 1. Clone the Repository
 
     ```
-    git clone https://github.com/annali-2/seizure.git
+    git clone https://github.com/annali-2/SeizurEShield-MVP.git
     cd seizure
     ```
 
