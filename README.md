@@ -1,6 +1,6 @@
 # SeizurEShield MVP Flask Application
 
-This repository contains a Flask web application for uploading EEG files, processing them, running predictions using a pre-trained RNN-LSTM model, and visualizing the results.  [Feel free to take a look at our app artifact here](https://drive.google.com/file/d/1GhZnzV0lEtl4iO4Be8TOeZFuyVCcqEAD/view?usp=sharing)
+This repository contains a Flask web application for uploading EEG files, processing them, running predictions using a pre-trained RNN-LSTM model, and visualizing the results.  [Feel free to take a look at our app artifact here](https://youtu.be/8KhJiH7exBw)
 
 ### Features
 * Upload EEG files in .edf format
